@@ -11,6 +11,9 @@ struct sockaddr_in * createIPv4Address(char *ip, int port){
         if(strlen(ip) == 0)
                 address->sin_addr.s_addr = INADDR_ANY;
         else
-                inet_pton(AF_INET, ip, &address->sin_addr.s_addr);
+                {
+                        inet_pton(AF_INET, ip, &address->sin_addr.s_addr);
+                        // printf("In the functino call\n");
+                }
        return address;
 }

@@ -122,6 +122,7 @@ void recieveAndPrintIncomingData(int socketFD){
 	while(true){
 	
 		ssize_t amountRecieved = recv(socketFD, buffer, 1024, 0);
+		if(buffer[0] == 'G') printf("THIS IS HTTP GET");
 		if(amountRecieved > 0){
 			buffer[amountRecieved+1] = 0;
 			printf("%s\n", buffer);
