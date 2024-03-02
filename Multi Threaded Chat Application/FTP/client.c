@@ -1,11 +1,13 @@
 #include "../socketutils/socketutil.h"
 
 #define SIZE 1024
+// #define mav val 10
 
 void sendFile(FILE *file, int socketFD);
 
 int main(){
 	printf("Hello world\n");
+    // printf("%d", max val);
 	int socketFD = createTCPIpv4Socket();
     printf("Socket FD: %d\n", socketFD);
 
