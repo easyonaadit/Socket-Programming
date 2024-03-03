@@ -70,8 +70,6 @@ int main(){
                 printf("Enter the file name\n");
                 size_t fileNameCount = getline(&line, &lineSize, stdin);
                 line[fileNameCount-1] = 0;
-                // printf("THIS IS THE FILE NAME: %s", line);
-
                 size_t FILE_CODE_LENGTH = strlen(FILE_CODE);
                 size_t amountWasSent = send(socketFD, FILE_CODE, FILE_CODE_LENGTH, 0); //sending the file code
                 amountWasSent = send(socketFD, line, fileNameCount, 0); // sending the file name
@@ -114,7 +112,7 @@ void listenAndPrint(int socketFD){
                 writeFile(socketFD); //recieves the file name in this function itself 
             }
             else{
-                buffer[amountRecieved+1] = 0;
+                buffer[amountRecieved] = 0;
                 printf("%s\n", buffer);
             }	
         }
@@ -136,40 +134,36 @@ void sendFileInBinaryFormat(int socketFD, char *filename){
         printf("[-] Error in opening file");
         return; 
     }
-    // printf("[+] File opened succesfully.\n");
-
     sendFile(file, socketFD);
     printf("[+] file sent succesfully");
     return;
 
 }
 
+        //  printf("\033[0;31m"); // Set color to red
+        //         printf("Call: %d\nData: %s\nSize: %ld\n\n", i++,data, strlen(data));
+        //         printf("\033[0m"); // Reset color to default
 void sendFile(FILE *file, int socketFD){
     unsigned char data[SIZE];
-    // bzero(data, SIZE);
     memset(data, 0, SIZE);
     int i = 0;
     size_t bytesRead;
 
     while((bytesRead = fread(data, 1, SIZE, file)) > 0){
-
-        /**
         if(bytesRead < SIZE){
-            // printf("IN THE CLIENT IF ELSE\nBYTES READ: %ld\nSENDT DATA: ", bytesRead);
+            printf("IN THE CLIENT IF ELSE\nBYTES READ: %ld\nSENDT DATA: ", bytesRead);
             int payload = send(socketFD, data, bytesRead, 0);
-            // for(int k = 0; k < bytesRead; k++){
-            //     printf("%c", data[k]);
-            // }
+            for(int k = 0; k < bytesRead; k++){
+                printf("%c", data[k]);
+            }
             // unsigned char buffer[1];
             // buffer[0] = EOF;
             // payload = send(socketFD, buffer, 1, 0);
             break;
         }
-
-        */
         int payload = send(socketFD, data, bytesRead, 0);
-        // printf("THIS IS CALL: %d, PAYLOAD: %d\n", i++, payload);
-        // printf("[+]Sent Data: %s\n",data);
+        printf("THIS IS CALL: %d, PAYLOAD: %d\n", i++, payload);
+        printf("[+]Sent Data: %s\n",data);
         if(payload == -1){
             perror("[-] error in sending data");
             exit(1);
@@ -178,40 +172,19 @@ void sendFile(FILE *file, int socketFD){
         memset(data, 0, SIZE);
         // printf("[+]After having memset: [%s]\n", data);
     }
-
-    // while(fgets(data, SIZE, file) != NULL){
-    //     printf("[+]Gotten Data: %s\n\n",data);
-    //     int payload = send(socketFD, data, sizeof(data), 0);
-    //     if(payload == -1){
-    //         perror("[-] error in sending data");
-    //         exit(1);
-    //     }
-    //     printf("THIS IS CALL: %d, PAYLOAD: %d\n", i++, payload);
-    //     // bzero(data, SIZE);
-    //     memset(data, 0, SIZE);
-    //     printf("[+]After having memset: [%s]\n", data);
-    // }
-
-// printf("\nBROKE OUT OF LOOP");
 }
 
 void writeFile(int newSocket){
     char fileName[SIZE];
     int n = recv(newSocket, fileName, SIZE, 0);
+    printf("THIS IS CALL: 0, PAYLOAD: %d\nDATA in FILENAME: %s", n, fileName);
 
-    printf("\033[0;31m"); // Set color to red
-                printf("FILE NAME IS: %s\n", fileName);
-                printf("\033[0m"); // Reset color to default
+   
     
     FILE *file;
-
-    
-    // char *fileName = "recievedFile.jpg";
-    // char *fileName2 = "recievedFile2.bmp";
-    // char *fileName2 = "recievedFile2.mp3";
     unsigned char buffer[SIZE];
 
-    file = fopen(fileName, "ab");
+    file = fopen(fileName, "wb");
     if(file == NULL){
         printf("[-] Error in opening file\n");
         return; 
@@ -219,23 +192,9 @@ void writeFile(int newSocket){
     int i = 0;
 
     while(1){
-        // if(i == 8) break;
-        // printf("BLOCKED BEFORE RECV: %d\n", i);
         n = recv(newSocket, buffer, SIZE, 0);
-        // printf("BLOCKED AFTER RECV: %d\n", i);
-        // printf("DATA IS: ");
-        // for(int j = 0; j < SIZE; j++){
-        //     printf("%c, ", buffer[j]);
-        // }
-        // printf("\n\n");
         printf("THIS IS CALL: %d, PAYLOAD: %d\n", i++, n);
         printf("[+]Recieved Data: {[%s]}\n", buffer);
-
-        
-        // for(int l = 0; l < n; l++){
-        //     printf("%c", buffer[l]);
-        // }
-        // printf("\n");
         if(n <= 0){
             break;
             return;
@@ -250,36 +209,13 @@ void writeFile(int newSocket){
             printf("%c", buffer2[l]);
         }
         printf("\n");
-            // printf("INITIAL BUFFER: %s\n", buffer2);
-            // memset(buffer+n, 0, SIZE-n);
-            // printf("MEMSET BUFFER: %s\n", buffer);
-            // fputs(buffer2,file);
             fwrite(buffer, n, 1, file);
             printf("In the if-else part: %d\n", n);
-            // unsigned char buffer2[n];
-            // for(int k = 0; k < n; k++){
-                
-            //     buffer2[k] = buffer[k];
-            //     printf("%c ", buffer2[k]);
-            // }
-            // printf("\n");
-            // printf("Length of buffer2: %ld\n", strlen(buffer2));
-            // unsigned char buffer3[82];
-            // for(int k = 0; k < 82; k++){
-                
-            //     buffer3[k] = buffer2[k];
-            //     printf("%c ", buffer3[k]);
-            // }
-            // fputs(buffer2, file);
             break;
         }
         else{
-            // fprintf(file, "%s", buffer);
             fwrite(buffer, SIZE, 1, file);
-            // fputs(buffer, file);
             memset(buffer, 0, SIZE);
-            // printf("[+]After Memset: [%s]\n\n", buffer);
-            // bzero(buffer, SIZE);
         }
     }
     fclose(file);

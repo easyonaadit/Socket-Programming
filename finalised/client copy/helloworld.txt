@@ -1,4 +1,0 @@
-hello world
-this is aaditya deshpande
-this is a sample demo text file
-to be send over the network.
